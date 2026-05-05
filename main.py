@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 from termcolor import colored
-
+print("main")
 from calculate_signals import calculate_RSI, moving_average
 from csv_processing import file_find_select, filetype, load_price_data, year_range
 from portfolio import calculate_portfolio
