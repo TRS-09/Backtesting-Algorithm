@@ -1,5 +1,6 @@
 # Generate MA buy/sell/hold signals from 10-day vs 30-day averages.
 def moving_average(closes, minimum_days):
+    prev_signal = "HOLD"
     MA_signals = []
     days_to_wait = 0
     # Start at day 30 so both moving-average windows are available.
@@ -21,19 +22,21 @@ def moving_average(closes, minimum_days):
         ten_day_average = (ten_day_total / 10)
 
         # Enforce a cooldown so signals are not allowed to fire on consecutive days.
-        if ten_day_average > thirty_day_average and days_to_wait == 0:
+        if ten_day_average > thirty_day_average and days_to_wait == 0 and prev_signal != "BUY":
             MA_signals.append("BUY")
+            prev_signal = "BUY"
             if minimum_days != 0:
                 days_to_wait = minimum_days + 1
-        elif ten_day_average < thirty_day_average and days_to_wait == 0:
+        elif ten_day_average < thirty_day_average and days_to_wait == 0 and prev_signal != "SELL":
             MA_signals.append("SELL")
+            prev_signal = "SELL"
             if minimum_days != 0:
                 days_to_wait = minimum_days + 1
         else:
             MA_signals.append("HOLD")
+            prev_signal = "HOLD"
             if days_to_wait > 0:
                 days_to_wait -= 1
-
     return MA_signals
 
 # Calculate RSI values, then convert threshold crossings into trade signals.
@@ -74,20 +77,24 @@ def calculate_RSI(closes, overbuy, oversell, period, minimum_days):
 
 # Turn RSI threshold crossings into buy/sell/hold signals.
 def RSI_signals(RSI_list, minimum_days, overbuy, oversell):
+    prev_signal = "HOLD"
     signals = []
     prev = RSI_list[0]
     days_to_wait = 0
     for rsi in RSI_list:
-        if prev < oversell and rsi >= oversell and days_to_wait == 0:
+        if prev < oversell and rsi >= oversell and days_to_wait == 0 and prev_signal != "BUY":
             signals.append("BUY")
+            prev_signal = "BUY"
             if minimum_days != 0:
                 days_to_wait = minimum_days + 1
-        elif prev > overbuy and rsi <= overbuy and days_to_wait == 0:
+        elif prev > overbuy and rsi <= overbuy and days_to_wait == 0 and prev_signal != "SELL":
             signals.append("SELL")
+            prev_signal = "SELL"
             if minimum_days != 0:
                 days_to_wait = minimum_days + 1
         else:
             signals.append("HOLD")
+            prev_signal = "HOLD"
             if days_to_wait > 0:
                 days_to_wait -= 1
         prev = rsi
