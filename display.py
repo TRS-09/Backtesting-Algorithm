@@ -4,7 +4,7 @@ from GUI.settings import settings_page
 
 def main():
     st.sidebar.title("Navigation")
-    page = st.sidebar.radio("Go to", ["Home", "Settings","AUDIO"])
+    page = st.sidebar.checkbox("Go to", ["Home", "Settings","AUDIO"])
 
     if page == "Home":
         home_page()
