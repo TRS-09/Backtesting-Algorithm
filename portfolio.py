@@ -3,7 +3,12 @@ def calculate_portfolio(signals, risk_percentage, starting_cash, opens, offset, 
     portfolio = []
     shares_holding = 0
     cash = starting_cash
-    for i in range(len(signals) - 1):
+
+    tradable_days = min(len(signals), len(opens) - offset)
+    if tradable_days <= 0:
+        return starting_cash, portfolio, 0.0
+
+    for i in range(tradable_days):
         price = opens[i + offset]
         # The strategy holds either cash or one share position at a time.
         if shares_holding == 0 and signals[i] == "BUY":
@@ -17,5 +22,7 @@ def calculate_portfolio(signals, risk_percentage, starting_cash, opens, offset, 
             cash += ((shares_holding * price * (1 - slippage)) - fees)
             shares_holding = 0
         portfolio.append(cash + shares_holding * price)
-    profit = portfolio[-1] - starting_cash
-    return portfolio[-1], portfolio, profit
+
+    end_cash = portfolio[-1] if portfolio else starting_cash
+    profit = end_cash - starting_cash
+    return end_cash, portfolio, profit

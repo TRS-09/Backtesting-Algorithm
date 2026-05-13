@@ -95,7 +95,7 @@ while end != "Y" :
     plt.xlabel("YEAR")
 
     # Run the moving-average strategy first, then plot its portfolio curve.
-    MA_signals = moving_average(closes,minimum_days)
+    MA_signals = moving_average(closes,minimum_days,dates)
     end_cash,portfolio,profit = calculate_portfolio(MA_signals,risk_percentage,starting_cash,opens,30,slippage,fees)
     end_cash_text = colored(round(end_cash,2),"red")
     profit_text = colored(round(profit,2),"red")
