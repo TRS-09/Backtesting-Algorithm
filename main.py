@@ -9,12 +9,12 @@ from portfolio import calculate_portfolio
 from rsi_range import best_RSI_range
 from market_closed import plotting_dates,graph_plot_values
 
+# Base RSI lookback. The RSI strategy later uses `period + 2` to match the original offsets.
+period = 14
+
 end = "N"
 prev_overbuy = None
 prev_oversell = None
-
-# Base RSI lookback. The RSI strategy later uses `period + 2` to match the original offsets.
-period = 14
 
 # Select and inspect the CSV once before entering the backtest loop.
 file = file_find_select()
@@ -23,27 +23,29 @@ opens_loc,closes_loc,date_loc,descendingcsv = filetype(file)
 
 min_year,max_year = year_range(file, date_loc)
 
+#colored texts
+fee_text = colored("Would you like the realism of fees (Y/N) :  ","blue")
+invalid_risk_text = colored("Risk must be between 0-100%","yellow")
+risk_text = colored("How much risk do you want to take (x%) :  ","cyan")
+starting_cash_text = colored("Enter initial cash :  ","cyan")
+
+invalid_year_txt1 = ("INVALID YEAR , Valid years : "+str(min_year)+" - "+str(max_year))
+incorrect_year_text2 = colored(invalid_year_txt1,"yellow")
+
+starting_year_text = colored("Enter year to begin investing :  ","cyan")
+ending_year_text = colored("Enter year to end investing (uses data in 'x' year) :  ","cyan")
+
 
 while end != "Y" :
     # These values reset for each run so the user can test different ranges and risk settings.
     risk = 0
     minimum_days = 2
     slippage = 0.001
-    
-    #colored texts
-    fee_text = colored("Would you like the realism of fees (Y/N) :  ","blue")
-    invalid_risk_text = colored("Risk must be between 0-100%","yellow")
-    risk_text = colored("How much risk do you want to take (x%) :  ","cyan")
-    starting_cash_text = colored("Enter initial cash :  ","cyan")
 
     #starting year code
     starting_year = 0
     ending_year = 0
-    invalid_year_txt1 = ("INVALID YEAR , Valid years : "+str(min_year)+" - "+str(max_year))
-    incorrect_year_text2 = colored(invalid_year_txt1,"yellow")
 
-    starting_year_text = colored("Enter year to begin investing :  ","cyan")
-    ending_year_text = colored("Enter year to end investing (uses data in 'x' year) :  ","cyan")
     while int(starting_year) < min_year or int(starting_year)> max_year:
         starting_year = input(starting_year_text)
         if int(starting_year) < min_year or int(starting_year)> max_year:
