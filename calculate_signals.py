@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import copy
 # Generate MA buy/sell/hold signals from 10-day vs 30-day averages.
 def moving_average(closes, minimum_days,dates):
     prev_signal = "HOLD"
@@ -9,14 +9,6 @@ def moving_average(closes, minimum_days,dates):
     for i in range(30, len(closes)):
         thirty_day_total = 0
         ten_day_total = 0
-        # creates a date to compare to, if next date is not comparable_date +1 ,
-        # it's missed a day, so "HOLD"
-        prev_date,present_date = datetime.strptime(dates[i-1],"%Y-%m-%d"),datetime.strptime(dates[i],"%Y-%m-%d")
-        consecutive,gap = ((present_date - prev_date).days == 1),((present_date - prev_date).days)-1
-        if not consecutive:
-            for q in range(gap):
-                MA_signals.append("HOLD")
-
         for j in range(i - 30, i):
             thirty_day_total += closes[j]
 

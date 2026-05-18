@@ -7,6 +7,7 @@ from calculate_signals import calculate_RSI, moving_average
 from csv_processing import file_find_select, filetype, load_price_data, year_range
 from portfolio import calculate_portfolio
 from rsi_range import best_RSI_range
+from market_closed import plotting_dates,graph_plot_values
 
 end = "N"
 prev_overbuy = None
@@ -101,11 +102,10 @@ while end != "Y" :
     profit_text = colored(round(profit,2),"red")
     print("Total end cash for MA :",end_cash_text)
     print("Profit for MA :",profit_text)
-    # Left-pad with NaNs so the shorter portfolio series still lines up with the full date range.
-    pad = len(dates) - len(portfolio)
-    portfolio_plot = [np.nan]*pad + portfolio  
-    plt.plot(dates_dt, portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
 
+    #30 because portfolio for MA is 30 less than dates 
+    portfolio_plot,dates_dt = graph_plot_values(dates,portfolio,30)
+    plt.plot(dates_dt, portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
 
     # Choose RSI thresholds manually, reuse the previous pair, or brute-force a new pair.
     overbuy,oversell = best_RSI_range(closes,risk_percentage,starting_cash,opens,period,minimum_days,slippage,fees,prev_overbuy,prev_oversell)
@@ -119,9 +119,10 @@ while end != "Y" :
     profit_text = colored(round(profit,2),"red")
     print("Total end cash for RSI :",end_cash_text)
     print("Profit for RSI :",profit_text)
-    # RSI also starts later because it needs a lookback window before generating signals.(for the matplotlib)
-    pad = len(dates) - len(portfolio)
-    portfolio_plot = [np.nan]*pad + portfolio  
+    
+    #17 = period+3
+    portfolio_plot,dates_dt = graph_plot_values(dates,portfolio,17)
+
     plt.plot(dates_dt, portfolio_plot,label = "RSI | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2)) +" | Overbuy = "+ str(overbuy) +" | Oversell = "+ str(oversell) + " | "+str(starting_year) +"→" + str(int(ending_year)+1))
     plt.legend(fontsize=8)
 
