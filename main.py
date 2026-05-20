@@ -91,8 +91,6 @@ while end != "Y" :
     if not dates:
         print(colored(f"No data found for year {starting_year}. Try a different year.", "yellow"))
         continue
-
-    dates_dt = [datetime.strptime(d.strip(), "%Y-%m-%d") for d in dates]
         
     plt.ylabel("PORTFOLIO (£)")
     plt.xlabel("YEAR")
@@ -128,10 +126,18 @@ while end != "Y" :
     plt.plot(dates_dt, portfolio_plot,label = "RSI | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2)) +" | Overbuy = "+ str(overbuy) +" | Oversell = "+ str(oversell) + " | "+str(starting_year) +"→" + str(int(ending_year)+1))
     plt.legend(fontsize=8)
 
-    # Format the x-axis in yearly steps so long backtests stay readable.
-    ax = plt.gca()
-    ax.xaxis.set_major_locator(mdates.YearLocator())
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    #x-axis year steps
+    index = []
+    amount = 0
+    index_check_year = 0
+    for i in dates_dt:
+        year = (i.split("-"))[0]
+        if index_check_year != year:
+            index.append(amount)
+            index_check_year = year
+        amount += 1
+    plt.xticks(index)
+
 
     plt.title("Backtesting Results")
 
