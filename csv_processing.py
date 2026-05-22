@@ -108,5 +108,4 @@ def load_price_data(file, descendingcsv, date_loc, opens_loc, closes_loc, starti
                     dates.append((line[date_loc]))
                     opens.append(float(line[opens_loc]))
                     closes.append(float(line[closes_loc]))
-
     return dates, opens, closes

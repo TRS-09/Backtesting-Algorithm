@@ -1,7 +1,4 @@
-import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import numpy as np
-from datetime import datetime
 from termcolor import colored
 from calculate_signals import calculate_RSI, moving_average
 from csv_processing import file_find_select, filetype, load_price_data, year_range
@@ -124,7 +121,6 @@ while end != "Y" :
     portfolio_plot,dates_dt = graph_plot_values(dates,portfolio,17)
 
     plt.plot(dates_dt, portfolio_plot,label = "RSI | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2)) +" | Overbuy = "+ str(overbuy) +" | Oversell = "+ str(oversell) + " | "+str(starting_year) +"→" + str(int(ending_year)+1))
-    plt.legend(fontsize=8)
 
     #x-axis year steps
     index = []
@@ -136,13 +132,23 @@ while end != "Y" :
             index.append(amount)
             index_check_year = year
         amount += 1
-    plt.xticks(index)
+    #append the final date, as it falls the day before a new year
+    index.append(len(dates_dt)-1)
 
+    plt.xticks(index)
 
     plt.title("Backtesting Results")
 
-    plt.show(block=False)
+    #display savings account at rate 5%
+    yvalues = [starting_cash]
+    for i in range(0,((int(ending_year)+1)-int(starting_year))):
+        yvalues.append(yvalues[i]*(1.05))
+    xvalues = [f"{year}-01-01" for year in range(int(starting_year),int(ending_year)+2)]
+    plt.plot(xvalues,yvalues,label = "Savings Account (5% AER)")
 
+    plt.legend(fontsize=8)
+    plt.show(block=False)
+    
     end = input("Quit(Y/N) : ").strip().upper()[:1]
 
 # ATR — volatility measurement
