@@ -1,5 +1,8 @@
-date = "2020-04-16"
+import matplotlib.pyplot as plt
 
-x = (date.split("-"))[0]
+xvalues = [1000]
+for i in range(0,10):
+    xvalues.append(xvalues[i]*(1.05))
 
-print(x)
+plt.plot(xvalues)
+plt.show()

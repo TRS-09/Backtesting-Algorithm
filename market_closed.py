@@ -8,12 +8,12 @@ def plotting_dates(dates):
     Input is expected to be trading dates (YYYY-MM-DD) in ascending order.
     """
     dates_plt = []
-    # Walk through adjacent pairs so we can measure the day gap between them.
+    # Walk through adjacent pairs and measure the day gap between them.
     for i in range(0,len(dates)-1):
         prev_date,present_date = datetime.strptime(dates[i],"%Y-%m-%d"),datetime.strptime(dates[i+1],"%Y-%m-%d")
         consecutive,gap = ((present_date - prev_date).days == 1),((present_date - prev_date).days)-1
         if consecutive:
-            # Normal trading-day step: keep the current day.
+            # Normal trading-day step: append the current normal day.
             dates_plt.append(str(prev_date.date()))
         if not consecutive:
             # Gap detected: add current day first, then fill each missing day.
