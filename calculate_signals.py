@@ -1,5 +1,4 @@
 from datetime import datetime
-import copy
 # Generate MA buy/sell/hold signals from 10-day vs 30-day averages.
 def moving_average(closes, minimum_days,dates):
     prev_signal = "HOLD"

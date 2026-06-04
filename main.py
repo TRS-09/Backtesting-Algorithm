@@ -132,19 +132,27 @@ while end != "Y" :
             index.append(amount)
             index_check_year = year
         amount += 1
-    #append the final date, as it falls the day before a new year
-    index.append(len(dates_dt)-1)
+
+    #  append the final date, as it falls the day before a new year (only if there is a sufficient gap of 100 
+    # dates inbetween to prevent overcrowding)
+    if len(dates_dt) - index[-1] > 100:
+        index.append(len(dates_dt)-1)
 
     plt.xticks(index)
 
     plt.title("Backtesting Results")
 
     #display savings account at rate 5%
-    yvalues = [starting_cash]
-    for i in range(0,((int(ending_year)+1)-int(starting_year))):
-        yvalues.append(yvalues[i]*(1.05))
-    xvalues = [f"{year}-01-01" for year in range(int(starting_year),int(ending_year)+2)]
-    plt.plot(xvalues,yvalues,label = "Savings Account (5% AER)")
+    def plot_savings():
+        yvalues = [starting_cash]
+        for i in range(0,((int(ending_year))-int(starting_year))):
+            yvalues.append(yvalues[i]*(1.05))
+        xvalues = [f"{year}-01-01" for year in range(int(starting_year)+1,int(ending_year)+1)]
+        # just add the first date in dates_dt, into xvalues. This is because the first date of dates_dt can change
+        xvalues.insert(0,dates_dt[0])
+        plt.plot(xvalues,yvalues,label = "Savings Account (5% AER)")
+    
+    plot_savings()
 
     plt.legend(fontsize=8)
     plt.show(block=False)
