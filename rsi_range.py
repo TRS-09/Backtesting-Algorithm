@@ -1,4 +1,4 @@
-from portfolio import calculate_portfolio
+from portfolio import Portfolio
 
 # Choose RSI thresholds manually, reuse the previous pair, or brute-force a new pair.
 def best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbuy,prev_oversell,ind):
@@ -30,15 +30,8 @@ def best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbu
                 ind.overbuy = overbuy
                 ind.oversell = oversell
                 RSI_signals = ind.RSI_signals()
-                end_cash, portfolio, profit = calculate_portfolio(
-                    RSI_signals,
-                    risk_percentage,
-                    starting_cash,
-                    opens,
-                    ind.period + 3,
-                    slippage,
-                    fees,
-                )
+                rsi_offset = ind.period + 3
+                end_cash, RSIportfolio, profit = Portfolio.calculate_portfolio(RSI_signals, risk_percentage, starting_cash, opens, rsi_offset, slippage, fees)
                 if highest is None or profit > highest:
                     highest = profit
                     best_overbuy = overbuy
