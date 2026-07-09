@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from termcolor import colored
 from calculate_signals import IndicatorCalculator
-from csv_processing import file_find_select, filetype, load_price_data, year_range
+from csv_processing import file_find_select, ProcessCSV
 from portfolio import calculate_portfolio
 from rsi_range import best_RSI_range
 from market_closed import plotting_dates,graph_plot_values
@@ -16,12 +16,10 @@ prev_oversell = None
 overbuy = 0
 oversell = 0
 
-# Select and inspect the CSV once before entering the backtest loop.
-file = file_find_select()
-
-opens_loc,closes_loc,date_loc,descendingcsv = filetype(file)
-
-min_year,max_year = year_range(file, date_loc)
+# Select and inspect the CSV once before entering the backtest loop
+csv_data = ProcessCSV(file_find_select())
+min_year = csv_data.min_year
+max_year = csv_data.max_year
 
 #colored texts
 fee_text = colored("Would you like the realism of fees (Y/N) :  ","blue")
@@ -78,15 +76,7 @@ while end != "Y" :
     print("")
 
     # Load only the chosen date window into memory for the strategies to use.
-    dates, opens, closes = load_price_data(
-        file,
-        descendingcsv,
-        date_loc,
-        opens_loc,
-        closes_loc,
-        starting_year,
-        ending_year,
-    )
+    dates, opens, closes = csv_data.load_price_data(starting_year, ending_year)
 
     if not dates:
         print(colored(f"No data found for year {starting_year}. Try a different year.", "yellow"))
