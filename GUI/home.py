@@ -1,11 +1,18 @@
-import streamlit as st
+import tkinter as tk    
 
-def home_page():
+root = tk.Tk()
 
-    c1, c2, c3 = st.columns([1,2,1])
+def dothis():
+    print("g")
 
-    with c2:
-        st.markdown("<div style='text-align : center ; font-size : 70px'>Welcome</div>",unsafe_allow_html=True)
+w = int(root.winfo_screenwidth() * 0.8)
+h = int(root.winfo_screenheight() * 0.8)
 
-    with c2:
-        st.markdown("<div style = 'text-align : center'>Ready to backtest!</div>",unsafe_allow_html=True)
+root.geometry(f"{w}x{h}")
+
+button = tk.Button(root,text="click me",command = dothis)
+button.grid(row = 1,column = 1)
+
+label1 = tk.Button(root,text = "label1 , the best label")
+label1.grid(column=1,row=2)
+root.mainloop()
