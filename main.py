@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from termcolor import colored
 from calculate_signals import IndicatorCalculator
 from csv_processing import file_find_select, ProcessCSV
-from portfolio import calculate_portfolio
+from portfolio import Portfolio
 from rsi_range import best_RSI_range
 from market_closed import plotting_dates,graph_plot_values
 
@@ -88,16 +88,18 @@ while end != "Y" :
 
     # Run the indicator class
     ind = IndicatorCalculator(closes,dates,minimum_days,period,overbuy,oversell)
+
     # Run the moving-average strategy first, then plot its portfolio curve.
     MA_signals = ind.moving_average()
-    end_cash,portfolio,profit = calculate_portfolio(MA_signals,risk_percentage,starting_cash,opens,30,slippage,fees)
-    end_cash_text = colored(round(end_cash,2),"red")
+
+    end_cash, MAportfolio, profit = Portfolio.calculate_portfolio(MA_signals, risk_percentage, starting_cash, opens, 30, slippage, fees)
+    end_cash_text = colored(round(2),"red")
     profit_text = colored(round(profit,2),"red")
     print("Total end cash for MA :",end_cash_text)
     print("Profit for MA :",profit_text)
 
     #30 because portfolio for MA is 30 less than dates 
-    portfolio_plot,dates_dt = graph_plot_values(dates,portfolio,30)
+    portfolio_plot,dates_dt = graph_plot_values(dates,MAportfolio,30)
     plt.plot(dates_dt, portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
 
     # Choose RSI thresholds manually, reuse the previous pair, or brute-force a new pair.
@@ -110,13 +112,14 @@ while end != "Y" :
     ind.oversell = oversell
     RSI_signals = ind.RSI_signals()
     rsi_offset = period + 3
-    end_cash,portfolio,profit = calculate_portfolio(RSI_signals,risk_percentage,starting_cash,opens,rsi_offset,slippage,fees)
+    RSIportfolio = Portfolio(opens, risk_percentage, starting_cash, slippage, fees)
+    end_cash, RSIportfolio, profit = Portfolio.calculate_portfolio(RSI_signals, risk_percentage, starting_cash, opens, rsi_offset, slippage, fees)
     end_cash_text = colored(round(end_cash,2),"red")
     profit_text = colored(round(profit,2),"red")
     print("Total end cash for RSI :",end_cash_text)
     print("Profit for RSI :",profit_text)
     
-    portfolio_plot,dates_dt = graph_plot_values(dates,portfolio,rsi_offset)
+    portfolio_plot,dates_dt = graph_plot_values(dates,RSIportfolio,rsi_offset)
 
     plt.plot(dates_dt, portfolio_plot,label = "RSI | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2)) +" | Overbuy = "+ str(overbuy) +" | Oversell = "+ str(oversell) + " | "+str(starting_year) +"→" + str(int(ending_year)+1))
 
