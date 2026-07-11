@@ -4,7 +4,7 @@ from calculate_signals import IndicatorCalculator
 from csv_processing import file_find_select, ProcessCSV
 from portfolio import Portfolio
 from rsi_range import best_RSI_range
-from market_closed import PlotData
+from plot_run import PlotData
 
 # Base RSI lookback. The RSI strategy later uses `period + 2` to match the original offsets.
 period = 14
@@ -141,16 +141,18 @@ while end != "Y" :
     plt.title("Backtesting Results")
 
     #display savings account at rate 5%
-    def plot_savings():
+    def plot_savings(RSIplot):
         yvalues = [starting_cash]
-        for i in range(0,((int(ending_year))-int(starting_year))):
-            yvalues.append(yvalues[i]*(1.05))
+        for i in range(1,((int(ending_year))-int(starting_year)+2)):
+            yvalues.append(yvalues[i-1]*(1.05))
         xvalues = [f"{year}-01-01" for year in range(int(starting_year)+1,int(ending_year)+1)]
         # just add the first date in dates_dt, into xvalues. This is because the first date of dates_dt can change
         xvalues.insert(0,RSIplot.calendar_dates[0])
+        xvalues.append(RSIplot.calendar_dates[-1])
         plt.plot(xvalues,yvalues,label = "Savings Account (5% AER)")
+        
     
-    plot_savings()
+    plot_savings(RSIplot)
 
     plt.legend(fontsize=8)
     plt.show(block=False)
