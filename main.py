@@ -4,7 +4,7 @@ from calculate_signals import IndicatorCalculator
 from csv_processing import file_find_select, ProcessCSV
 from portfolio import Portfolio
 from rsi_range import best_RSI_range
-from market_closed import plotting_dates,graph_plot_values
+from market_closed import PlotData
 
 # Base RSI lookback. The RSI strategy later uses `period + 2` to match the original offsets.
 period = 14
@@ -92,42 +92,39 @@ while end != "Y" :
     # Run the moving-average strategy first, then plot its portfolio curve.
     MA_signals = ind.moving_average()
 
-    end_cash, MAportfolio, profit = Portfolio.calculate_portfolio(MA_signals, risk_percentage, starting_cash, opens, 30, slippage, fees)
-    end_cash_text = colored(round(2),"red")
-    profit_text = colored(round(profit,2),"red")
+    MAportfolio = Portfolio(opens, risk_percentage, starting_cash, slippage, fees,MA_signals,30)
+    end_cash_text = colored(round(MAportfolio.end_cash,2),"red")
+    profit_text = colored(round(MAportfolio.profit,2),"red")
     print("Total end cash for MA :",end_cash_text)
     print("Profit for MA :",profit_text)
 
     #30 because portfolio for MA is 30 less than dates 
-    portfolio_plot,dates_dt = graph_plot_values(dates,MAportfolio,30)
-    plt.plot(dates_dt, portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
+    MAplot = PlotData(dates,30,MAportfolio.portfolio)
+    plt.plot(MAplot.calendar_dates, MAplot.portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(MAportfolio.profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
 
     # Choose RSI thresholds manually, reuse the previous pair, or brute-force a new pair.
-    overbuy,oversell = best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbuy,prev_oversell,ind)
+    overbuy,oversell = best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbuy,prev_oversell,ind,period,closes,dates,minimum_days)
     prev_overbuy,prev_oversell = overbuy,oversell
     print("Best range for RSI found. Overbuy =",overbuy,"Oversell =",oversell)
 
     # Run the RSI strategy with the selected thresholds and plot the result.
-    ind.overbuy = overbuy
-    ind.oversell = oversell
-    RSI_signals = ind.RSI_signals()
     rsi_offset = period + 3
-    RSIportfolio = Portfolio(opens, risk_percentage, starting_cash, slippage, fees)
-    end_cash, RSIportfolio, profit = Portfolio.calculate_portfolio(RSI_signals, risk_percentage, starting_cash, opens, rsi_offset, slippage, fees)
-    end_cash_text = colored(round(end_cash,2),"red")
-    profit_text = colored(round(profit,2),"red")
-    print("Total end cash for RSI :",end_cash_text)
-    print("Profit for RSI :",profit_text)
-    
-    portfolio_plot,dates_dt = graph_plot_values(dates,RSIportfolio,rsi_offset)
+    RSI_signals = IndicatorCalculator(closes, dates, minimum_days, period, overbuy, oversell).RSI_signals()
+    RSIportfolio = Portfolio(opens, risk_percentage, starting_cash, slippage, fees,RSI_signals,period + 3)
+    end_cash_text = colored(round(RSIportfolio.end_cash,2),"red")
+    profit_text = colored(round(RSIportfolio.profit,2),"red")
+    print("Total end cash for MA :",end_cash_text)
+    print("Profit for MA :",profit_text) 
 
-    plt.plot(dates_dt, portfolio_plot,label = "RSI | Risk = "+str(risk) +"% | Profit =  £"+ str(round(profit,2)) +" | Overbuy = "+ str(overbuy) +" | Oversell = "+ str(oversell) + " | "+str(starting_year) +"→" + str(int(ending_year)+1))
+    #30 because portfolio for MA is 30 less than dates 
+    RSIplot = PlotData(dates,period + 3,RSIportfolio.portfolio)
+    plt.plot(RSIplot.calendar_dates, RSIplot.portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(RSIportfolio.profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
 
     #x-axis year steps
     index = []
     amount = 0
     index_check_year = 0
-    for i in dates_dt:
+    for i in RSIplot.calendar_dates:
         year = (i.split("-"))[0]
         if index_check_year != year:
             index.append(amount)
@@ -136,8 +133,8 @@ while end != "Y" :
 
     #  append the final date, as it falls the day before a new year (only if there is a sufficient gap of 100 
     # dates inbetween to prevent overcrowding)
-    if len(dates_dt) - index[-1] > 100:
-        index.append(len(dates_dt)-1)
+    if len(RSIplot.calendar_dates) - index[-1] > 100:
+        index.append(len(RSIplot.calendar_dates)-1)
 
     plt.xticks(index)
 
@@ -150,7 +147,7 @@ while end != "Y" :
             yvalues.append(yvalues[i]*(1.05))
         xvalues = [f"{year}-01-01" for year in range(int(starting_year)+1,int(ending_year)+1)]
         # just add the first date in dates_dt, into xvalues. This is because the first date of dates_dt can change
-        xvalues.insert(0,dates_dt[0])
+        xvalues.insert(0,RSIplot.calendar_dates[0])
         plt.plot(xvalues,yvalues,label = "Savings Account (5% AER)")
     
     plot_savings()

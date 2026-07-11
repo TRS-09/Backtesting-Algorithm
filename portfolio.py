@@ -1,13 +1,14 @@
 # Simulate trades from signals and return ending cash, curve, and profit.
 class Portfolio:
-    def __init__(self, opens, risk_percentage, starting_cash, slippage, fees):
+    def __init__(self, opens, risk_percentage, starting_cash, slippage, fees,signals,offset):
         self.opens = opens
         self.risk_percentage = risk_percentage
         self.starting_cash = starting_cash
         self.slippage = slippage
         self.fees = fees
+        self.portfolio , self.profit, self.end_cash = self.calculate_portfolio(signals, risk_percentage, starting_cash, opens, offset, slippage, fees)
 
-    def calculate_portfolio(signals, risk_percentage, starting_cash, opens, offset, slippage, fees):
+    def calculate_portfolio(self,signals, risk_percentage, starting_cash, opens, offset, slippage, fees):
         portfolio = []
         shares_holding = 0
         cash = starting_cash
@@ -33,4 +34,5 @@ class Portfolio:
 
         end_cash = portfolio[-1] if portfolio else starting_cash
         profit = end_cash - starting_cash
-        return end_cash, portfolio, profit
+
+        return portfolio, profit, end_cash 
