@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton
-from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QFrame
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QFont
 
 class loadCSV(QWidget):
     go_home = Signal()
@@ -10,14 +11,5 @@ class loadCSV(QWidget):
 
         layout = QVBoxLayout()
 
-        testbtn = QPushButton("test")
-        testbtn.setStyleSheet("background-color: black;")
-
-        # Emit True when clicked
-        testbtn.clicked.connect(lambda: self.csv_loaded.emit(True))
-
-        # Go home
-        testbtn.clicked.connect(self.go_home.emit)
-
-        layout.addWidget(testbtn)
-        self.setLayout(layout)
+        # title
+        layout.addWidget(QLabel(""))

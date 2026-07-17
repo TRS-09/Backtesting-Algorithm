@@ -34,12 +34,13 @@ class HomeScreen(QWidget):
 
         # CSV row
         row1 = QHBoxLayout()
-        self.strategysettingsbtn = QPushButton("Strategy Settings")   # THIS is the button you want to update
+        self.strategysettingsbtn = QPushButton("Strategy Settings")
         self.strategysettingsbtn.setFont(QFont("arial", 18))
         self.strategysettingsbtn.setStyleSheet("""
             QPushButton {
                 background-color: #d9d9db;
                 padding: 25px 10px;
+                color: black;
             }
         """)
         self.strategysettingsbtn.clicked.connect(self.go_settings.emit)
@@ -49,10 +50,56 @@ class HomeScreen(QWidget):
 
         layout.addLayout(row1)
 
-        # add buttons/text -------------
+        #CSV input
+        row2 = QHBoxLayout()
+        CSVbtn = QPushButton("Enter CSV")
+        CSVbtn.setStyleSheet("""
+            QPushButton {
+                background-color: #d9d9db;
+                padding: 25px 10px;
+                color: black;
+            }
+        """)
+        CSVbtn.setFont(QFont("arial", 18))
+        CSVbtn.clicked.connect(self.go_CSV.emit)
+
+        row2.addWidget(CSVbtn)
+        row2.addWidget(QLabel("Input your CSV of choice, then validate it!"))
+        layout.addLayout(row2)
+
+        #results button/text
+        row3 = QHBoxLayout()
+
+        resultsBtn = QPushButton("Results")
+        resultsBtn.setStyleSheet("""
+            QPushButton {
+                background-color: red;
+                padding: 25px 10px;
+                color: white;
+            }
+        """)
+        resultsBtn.setFont(QFont("arial", 18))
+
+        row3.addWidget(resultsBtn)
+        row3.addWidget(QLabel("See results and analysis of backtest"))
+        layout.addLayout(row3)
+
+        # backtest button
+        layout.addSpacing(120)
+        backtestrow = QHBoxLayout()
+        backtestrow.addStretch()
+        backtestBtn = QPushButton("Run Backtest")
+        backtestBtn.setStyleSheet("""QPushButton { 
+                                            background-color: red;
+                                  }""")
+        backtestBtn.setFixedWidth(100)
+        backtestrow.addWidget(backtestBtn)
+        backtestrow.addStretch()
+
+        layout.addLayout(backtestrow)
+
 
         layout.addStretch()
-
         # Bottom divider
         line2 = QFrame()
         line2.setFrameShape(QFrame.HLine)
