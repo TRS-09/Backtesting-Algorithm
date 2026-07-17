@@ -59,7 +59,7 @@ while end != "Y" :
             print(incorrect_year_text4) 
             print("")
 
-    while risk > 100 or risk < 1:
+    while (risk > 100 or risk < 1):
         print("")
         risk = int(input(risk_text))
         risk_percentage = risk / 100
