@@ -15,6 +15,7 @@ class loadCSV(QWidget):
 
         # Title
         title = QLabel("Upload CSV")
+        title.setStyleSheet("color: white;")
         title.setFont(QFont("arial", 28, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
         layout.addWidget(title)
@@ -32,6 +33,7 @@ class loadCSV(QWidget):
                 border: 3px dashed #888;
                 padding: 60px;
                 font-size: 18px;
+                color: white;
             }
         """)
         self.dragndrop.setAlignment(Qt.AlignCenter)
@@ -52,6 +54,7 @@ class loadCSV(QWidget):
                 padding: 60px;
                 font-size: 18px;
                 background-color: #5e5e5d;
+                color: white;
             }
         """)
             
@@ -62,6 +65,7 @@ class loadCSV(QWidget):
                 border: 3px dashed #888;
                 padding: 60px;
                 font-size: 18px;
+                color: white;
             }
         """)
         
@@ -73,6 +77,7 @@ class loadCSV(QWidget):
                         padding: 60px;
                         font-size: 18px;
                         background-color: green;
+                        color: white;
                     }
                 """)
 
@@ -81,6 +86,7 @@ class loadCSV(QWidget):
                 border: 3px dashed #888;
                 padding: 60px;
                 font-size: 18px;
+                color: white;
             }
         """))
         urls = event.mimeData().urls()

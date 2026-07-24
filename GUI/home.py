@@ -3,6 +3,21 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont
 
 class HomeScreen(QWidget):
+    """
+    The HomeScreen class represents the main landing page of the Stock Backtesting Tool GUI.
+    It provides navigation buttons for strategy settings, CSV input, results viewing, and running
+    the backtest. The screen is built using PySide6 layouts (QVBoxLayout and QHBoxLayout) and
+    emits signals to allow the main application to switch between screens.
+
+    Signals:
+        go_settings: emitted when the Strategy Settings button is pressed.
+        go_CSV: emitted when the CSV input button is pressed.
+
+    Methods:
+        updatestrategyButtonColor(loaded: bool):
+            Updates the colour of the strategy settings button depending on whether a CSV
+            has been successfully loaded.
+    """
     go_settings = Signal()
     go_CSV = Signal()
 
@@ -15,6 +30,7 @@ class HomeScreen(QWidget):
 
         # Title
         title = QLabel("Stock Backtesting Tool")
+        title.setStyleSheet(" color: white;")
         title.setFont(QFont("arial", 28, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
         layout.addWidget(title)
@@ -27,6 +43,7 @@ class HomeScreen(QWidget):
 
         # Welcome text
         welcometxt = QLabel("Welcome! Good luck backtesting :)")
+        welcometxt.setStyleSheet("color: white;")
         welcometxt.setAlignment(Qt.AlignCenter)
         layout.addWidget(welcometxt)
 
@@ -46,7 +63,10 @@ class HomeScreen(QWidget):
         self.strategysettingsbtn.clicked.connect(self.go_settings.emit)
         row1.addWidget(self.strategysettingsbtn)
 
-        row1.addWidget(QLabel("Alter settings for RSI, MA such as period, overbuy/oversell"))
+        indlabel = QLabel("Alter settings for RSI, MA such as period, overbuy/oversell")
+        indlabel.setStyleSheet("color: white;")
+
+        row1.addWidget(indlabel)
 
         layout.addLayout(row1)
 
@@ -63,8 +83,12 @@ class HomeScreen(QWidget):
         CSVbtn.setFont(QFont("arial", 18))
         CSVbtn.clicked.connect(self.go_CSV.emit)
 
+        CSVlabel = QLabel("Input your CSV of choice, then validate it!")
+        CSVlabel.setStyleSheet("color: white;")
+
         row2.addWidget(CSVbtn)
-        row2.addWidget(QLabel("Input your CSV of choice, then validate it!"))
+        row2.addWidget(CSVlabel)
+
         layout.addLayout(row2)
 
         #results button/text
@@ -80,8 +104,11 @@ class HomeScreen(QWidget):
         """)
         resultsBtn.setFont(QFont("arial", 18))
 
+        resultslabel = QLabel("See results and analysis of backtest")
+        resultslabel.setStyleSheet("color: white;")
+
         row3.addWidget(resultsBtn)
-        row3.addWidget(QLabel("See results and analysis of backtest"))
+        row3.addWidget(resultslabel)
         layout.addLayout(row3)
 
         # backtest button
@@ -91,6 +118,7 @@ class HomeScreen(QWidget):
         backtestBtn = QPushButton("Run Backtest")
         backtestBtn.setStyleSheet("""QPushButton { 
                                             background-color: red;
+                                            color: white;
                                   }""")
         backtestBtn.setFixedWidth(100)
         backtestrow.addWidget(backtestBtn)
@@ -108,6 +136,7 @@ class HomeScreen(QWidget):
 
         # Version text
         version = QLabel("Version 1.0 - Teo Smith")
+        version.setStyleSheet("color: white;")
         version.setAlignment(Qt.AlignCenter)
         layout.addWidget(version)
 

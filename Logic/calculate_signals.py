@@ -19,6 +19,7 @@ class IndicatorCalculator:
         MA_signals = []
         days_to_wait = 0
 
+# change it, because at the moment it can go BUY HOLD .. but now prev signal = HOLD, so it can go BUY HOLD BUY, which is not what we want. 
         for i in range(30, len(closes)):
             thirty_day_total = sum(closes[i-30:i])
             ten_day_total = sum(closes[i-10:i])
@@ -48,7 +49,7 @@ class IndicatorCalculator:
 
     def calculate_RSI(self):
         closes = self.closes
-        period = self.period + 2
+        period = self.period
 
         RSI_list = []
         if len(closes) < period + 1:

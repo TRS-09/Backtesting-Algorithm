@@ -8,7 +8,7 @@ from upload_data import loadCSV
 app = QApplication(sys.argv)
 
 stack = QStackedWidget()
-
+stack.setStyleSheet("background-color: #323232;")
 home = HomeScreen()
 setting = SettingsScreen()
 csv = loadCSV()
