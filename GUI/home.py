@@ -3,21 +3,6 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont
 
 class HomeScreen(QWidget):
-    """
-    The HomeScreen class represents the main landing page of the Stock Backtesting Tool GUI.
-    It provides navigation buttons for strategy settings, CSV input, results viewing, and running
-    the backtest. The screen is built using PySide6 layouts (QVBoxLayout and QHBoxLayout) and
-    emits signals to allow the main application to switch between screens.
-
-    Signals:
-        go_settings: emitted when the Strategy Settings button is pressed.
-        go_CSV: emitted when the CSV input button is pressed.
-
-    Methods:
-        updatestrategyButtonColor(loaded: bool):
-            Updates the colour of the strategy settings button depending on whether a CSV
-            has been successfully loaded.
-    """
     go_settings = Signal()
     go_CSV = Signal()
 
@@ -28,29 +13,55 @@ class HomeScreen(QWidget):
         layout.setSpacing(30)
         layout.setContentsMargins(40, 30, 40, 40)
 
-        # Title
+        layout.addWidget(self.build_title())
+        layout.addWidget(self.build_divider())
+        layout.addWidget(self.build_welcome_text())
+        layout.addSpacing(40)
+        layout.addLayout(self.build_strategy_row())
+        layout.addLayout(self.build_csv_row())
+        layout.addLayout(self.build_results_row())
+        layout.addSpacing(120)
+        layout.addLayout(self.build_backtest_row())
+        layout.addStretch()
+        layout.addWidget(self.build_bottom_divider())
+        layout.addWidget(self.build_version_text())
+
+        self.setLayout(layout)
+
+    # -----------------------------
+    # Title
+    # -----------------------------
+    def build_title(self):
         title = QLabel("Stock Backtesting Tool")
-        title.setStyleSheet(" color: white;")
+        title.setStyleSheet("color: white;")
         title.setFont(QFont("arial", 28, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title)
+        return title
 
-        # Divider
+    # -----------------------------
+    # Divider
+    # -----------------------------
+    def build_divider(self):
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setStyleSheet("color: grey;")
-        layout.addWidget(line)
+        return line
 
-        # Welcome text
+    # -----------------------------
+    # Welcome text
+    # -----------------------------
+    def build_welcome_text(self):
         welcometxt = QLabel("Welcome! Good luck backtesting :)")
         welcometxt.setStyleSheet("color: white;")
         welcometxt.setAlignment(Qt.AlignCenter)
-        layout.addWidget(welcometxt)
+        return welcometxt
 
-        layout.addSpacing(40)
+    # -----------------------------
+    # Strategy Settings row
+    # -----------------------------
+    def build_strategy_row(self):
+        row = QHBoxLayout()
 
-        # CSV row
-        row1 = QHBoxLayout()
         self.strategysettingsbtn = QPushButton("Strategy Settings")
         self.strategysettingsbtn.setFont(QFont("arial", 18))
         self.strategysettingsbtn.setStyleSheet("""
@@ -61,18 +72,23 @@ class HomeScreen(QWidget):
             }
         """)
         self.strategysettingsbtn.clicked.connect(self.go_settings.emit)
-        row1.addWidget(self.strategysettingsbtn)
 
-        indlabel = QLabel("Alter settings for RSI, MA such as period, overbuy/oversell")
-        indlabel.setStyleSheet("color: white;")
+        label = QLabel("Alter settings for RSI, MA such as period, overbuy/oversell")
+        label.setStyleSheet("color: white;")
 
-        row1.addWidget(indlabel)
+        row.addWidget(self.strategysettingsbtn)
+        row.addWidget(label)
 
-        layout.addLayout(row1)
+        return row
 
-        #CSV input
-        row2 = QHBoxLayout()
+    # -----------------------------
+    # CSV input row
+    # -----------------------------
+    def build_csv_row(self):
+        row = QHBoxLayout()
+
         CSVbtn = QPushButton("Enter CSV")
+        CSVbtn.setFont(QFont("arial", 18))
         CSVbtn.setStyleSheet("""
             QPushButton {
                 background-color: #d9d9db;
@@ -80,68 +96,82 @@ class HomeScreen(QWidget):
                 color: black;
             }
         """)
-        CSVbtn.setFont(QFont("arial", 18))
         CSVbtn.clicked.connect(self.go_CSV.emit)
 
-        CSVlabel = QLabel("Input your CSV of choice, then validate it!")
-        CSVlabel.setStyleSheet("color: white;")
+        label = QLabel("Input your CSV of choice, then validate it!")
+        label.setStyleSheet("color: white;")
 
-        row2.addWidget(CSVbtn)
-        row2.addWidget(CSVlabel)
+        row.addWidget(CSVbtn)
+        row.addWidget(label)
 
-        layout.addLayout(row2)
+        return row
 
-        #results button/text
-        row3 = QHBoxLayout()
+    # -----------------------------
+    # Results row
+    # -----------------------------
+    def build_results_row(self):
+        row = QHBoxLayout()
 
         resultsBtn = QPushButton("Results")
+        resultsBtn.setFont(QFont("arial", 18))
         resultsBtn.setStyleSheet("""
             QPushButton {
-                background-color: red;
+                background-color: #d9d9db;
                 padding: 25px 10px;
-                color: white;
+                color: black;
             }
         """)
-        resultsBtn.setFont(QFont("arial", 18))
 
-        resultslabel = QLabel("See results and analysis of backtest")
-        resultslabel.setStyleSheet("color: white;")
+        label = QLabel("See results and analysis of backtest")
+        label.setStyleSheet("color: white;")
 
-        row3.addWidget(resultsBtn)
-        row3.addWidget(resultslabel)
-        layout.addLayout(row3)
+        row.addWidget(resultsBtn)
+        row.addWidget(label)
 
-        # backtest button
-        layout.addSpacing(120)
-        backtestrow = QHBoxLayout()
-        backtestrow.addStretch()
+        return row
+
+    # -----------------------------
+    # Backtest button row
+    # -----------------------------
+    def build_backtest_row(self):
+        row = QHBoxLayout()
+        row.addStretch()
+
         backtestBtn = QPushButton("Run Backtest")
-        backtestBtn.setStyleSheet("""QPushButton { 
-                                            background-color: red;
-                                            color: white;
-                                  }""")
+        backtestBtn.setStyleSheet("""
+            QPushButton {
+                background-color: #d9d9db;
+                color: black;
+            }
+        """)
         backtestBtn.setFixedWidth(100)
-        backtestrow.addWidget(backtestBtn)
-        backtestrow.addStretch()
 
-        layout.addLayout(backtestrow)
+        row.addWidget(backtestBtn)
+        row.addStretch()
 
+        return row
 
-        layout.addStretch()
-        # Bottom divider
-        line2 = QFrame()
-        line2.setFrameShape(QFrame.HLine)
-        line2.setStyleSheet("color: grey;")
-        layout.addWidget(line2)
+    # -----------------------------
+    # Bottom divider
+    # -----------------------------
+    def build_bottom_divider(self):
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setStyleSheet("color: grey;")
+        return line
 
-        # Version text
+    # -----------------------------
+    # Version text
+    # -----------------------------
+    def build_version_text(self):
         version = QLabel("Version 1.0 - Teo Smith")
         version.setStyleSheet("color: white;")
         version.setAlignment(Qt.AlignCenter)
-        layout.addWidget(version)
+        return version
 
-        self.setLayout(layout)
-
+    # -----------------------------
+    # Logic unchanged
+    # -----------------------------
     def updatestrategyButtonColor(self, loaded: bool):
         if loaded:
             self.strategysettingsbtn.setStyleSheet("""
