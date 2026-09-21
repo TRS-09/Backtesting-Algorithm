@@ -1,11 +1,12 @@
 from datetime import datetime
 
-from datetime import datetime
 
 class IndicatorCalculator:
-    def __init__(self, closes, dates, minimum_days, period, overbuy, oversell):
+    def __init__(self, closes, dates, minimum_days, period, overbuy, oversell, lows, highs):
         self.closes = closes
         self.dates = dates
+        self.highs = highs
+        self.lows = lows
         self.minimum_days = minimum_days
         self.period = period
         self.overbuy = overbuy      
@@ -19,31 +20,36 @@ class IndicatorCalculator:
         MA_signals = []
         days_to_wait = 0
 
-# change it, because at the moment it can go BUY HOLD .. but now prev signal = HOLD, so it can go BUY HOLD BUY, which is not what we want. 
+        # pad first 30 days with HOLD so signals align with closes
+        for _ in range(30):
+            MA_signals.append("HOLD")
+
         for i in range(30, len(closes)):
-            thirty_day_total = sum(closes[i-30:i])
-            ten_day_total = sum(closes[i-10:i])
+            thirty_day_avg = sum(closes[i-30:i]) / 30
+            ten_day_avg = sum(closes[i-10:i]) / 10
 
-            thirty_day_average = thirty_day_total / 30
-            ten_day_average = ten_day_total / 10
-
-            if ten_day_average > thirty_day_average and days_to_wait == 0 and prev_signal != "BUY":
+            # BUY signal
+            if ten_day_avg > thirty_day_avg and days_to_wait == 0 and prev_signal != "BUY":
                 MA_signals.append("BUY")
                 prev_signal = "BUY"
-                if minimum_days != 0:
-                    days_to_wait = minimum_days + 1
+                days_to_wait = minimum_days
 
-            elif ten_day_average < thirty_day_average and days_to_wait == 0 and prev_signal != "SELL":
+            # SELL signal
+            elif ten_day_avg < thirty_day_avg and days_to_wait == 0 and prev_signal != "SELL":
                 MA_signals.append("SELL")
                 prev_signal = "SELL"
-                if minimum_days != 0:
-                    days_to_wait = minimum_days + 1
+                days_to_wait = minimum_days
 
+            # HOLD
             else:
                 MA_signals.append("HOLD")
-                prev_signal = "HOLD"
+
+                # cooldown countdown
                 if days_to_wait > 0:
                     days_to_wait -= 1
+
+                # IMPORTANT: do NOT reset prev_signal here
+                # HOLD is not a signal, it's just a state
 
         return MA_signals
 
@@ -118,5 +124,88 @@ class IndicatorCalculator:
 
         return signals
 
+    def calculate_ATR(self):
+        """function to calculate raw ATR values."""
+        highs = self.highs
+        lows = self.lows
+        closes = self.closes
+        period = self.period
+
+        if len(highs) < period + 1:
+            return []
+
+        TR_list = []
+
+        # Step 1: Compute True Range for each day
+        for i in range(1, len(highs)):
+            high = highs[i]
+            low = lows[i]
+            prev_close = closes[i - 1]
+
+            tr = max(
+                high - low,
+                abs(high - prev_close),
+                abs(low - prev_close)
+            )
+            TR_list.append(tr)
+
+        # Step 2: Seed ATR with first period TR average
+        first_atr = sum(TR_list[:period]) / period
+        ATR_values = [first_atr]
+
+        # Step 3: Wilder smoothing for remaining ATR values
+        prev_atr = first_atr
+        for tr in TR_list[period:]:
+            atr = ((prev_atr * (period - 1)) + tr) / period
+            ATR_values.append(atr)
+            prev_atr = atr
+
+        return ATR_values
+
     def ATR(self):
-        pass
+        """Generates BUY/SELL/HOLD signals using an ATR Volatility Breakout model."""
+        atr_values = self.calculate_ATR()
+        closes = self.closes
+        period = self.period
+        minimum_days = self.minimum_days
+
+        signals = []
+        if not atr_values:
+            return signals
+
+        # Pad initial days where ATR isn't available to keep output aligned with closes length
+        padding_count = len(closes) - len(atr_values)
+        for _ in range(padding_count):
+            signals.append("HOLD")
+
+        prev_signal = "HOLD"
+        days_to_wait = 0
+
+        for k, atr in enumerate(atr_values):
+            i = period + k
+            curr_close = closes[i]
+            prev_close = closes[i - 1]
+
+            # Breakout logic: Price exceeds previous close by more than 1 ATR
+            upper_band = prev_close + atr
+            lower_band = prev_close - atr
+
+            # BUY signal (bullish volatility breakout)
+            if curr_close > upper_band and days_to_wait == 0 and prev_signal != "BUY":
+                signals.append("BUY")
+                prev_signal = "BUY"
+                days_to_wait = minimum_days
+
+            # SELL signal (bearish volatility breakdown)
+            elif curr_close < lower_band and days_to_wait == 0 and prev_signal != "SELL":
+                signals.append("SELL")
+                prev_signal = "SELL"
+                days_to_wait = minimum_days
+
+            # HOLD
+            else:
+                signals.append("HOLD")
+                if days_to_wait > 0:
+                    days_to_wait -= 1
+
+        return signals

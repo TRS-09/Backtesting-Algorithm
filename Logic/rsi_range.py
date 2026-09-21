@@ -2,7 +2,7 @@ from portfolio import Portfolio
 from calculate_signals import IndicatorCalculator
 
 # Choose RSI thresholds manually, reuse the previous pair, or brute-force a new pair.
-def best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbuy,prev_oversell,ind,period,closes,dates,minimum_days):
+def best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbuy,prev_oversell,ind,period,closes,dates,minimum_days,lows,highs):
     choose_RSI_range = ""
     while choose_RSI_range not in ["1","2","3"]:
         choose_RSI_range = input("Do you wish to use your own RSI range, previous, or find a new one? (1,2,3) ")
@@ -28,7 +28,7 @@ def best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbu
             oversell = i * 5
             for j in range(1, 10):
                 overbuy = 100 - j * 5
-                testRSIsignals = IndicatorCalculator(closes, dates, minimum_days, period, overbuy, oversell).RSI_signals()
+                testRSIsignals = IndicatorCalculator(closes, dates, minimum_days, period, overbuy, oversell,lows,highs).RSI_signals()
                 testRSIprofit = Portfolio(opens, risk_percentage, starting_cash, slippage, fees,testRSIsignals,period + 3).profit
                 while testRSIprofit > highest:
                     highest = testRSIprofit

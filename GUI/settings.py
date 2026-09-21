@@ -203,7 +203,7 @@ class SettingsScreen(QWidget):
         # Slow MA row
         row_slow = QHBoxLayout()
 
-        slow_lbl = QLabel("Slow MA:")
+        slow_lbl = QLabel("Slow MA (larger = slower trend detection):")
         slow_lbl.setStyleSheet("color: white; padding: 5px;")
 
         slow_box = QComboBox()
@@ -226,7 +226,7 @@ class SettingsScreen(QWidget):
         # Minimum days row
         row_min = QHBoxLayout()
 
-        min_lbl = QLabel("Minimum Days:")
+        min_lbl = QLabel("Minimum Days (days between BUY/SELLs):")
         min_lbl.setStyleSheet("color: white; padding: 5px;")
 
         min_box = QComboBox()

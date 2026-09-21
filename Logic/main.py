@@ -76,7 +76,10 @@ while end != "Y" :
     print("")
 
     # Load only the chosen date window into memory for the strategies to use.
-    dates, opens, closes = csv_data.load_price_data(starting_year, ending_year)
+    dates, opens, closes, highs, lows = csv_data.load_price_data(starting_year, ending_year)
+    for i in range(3):
+        print(lows[i])
+        print(highs[i])
 
     if not dates:
         print(colored(f"No data found for year {starting_year}. Try a different year.", "yellow"))
@@ -87,7 +90,7 @@ while end != "Y" :
 
 
     # Run the indicator class
-    ind = IndicatorCalculator(closes,dates,minimum_days,period,overbuy,oversell)
+    ind = IndicatorCalculator(closes,dates,minimum_days,period,overbuy,oversell,lows,highs)
 
     # Run the moving-average strategy first, then plot its portfolio curve.
     MA_signals = ind.moving_average()
@@ -103,22 +106,29 @@ while end != "Y" :
     plt.plot(MAplot.calendar_dates, MAplot.portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(MAportfolio.profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
 
     # Choose RSI thresholds manually, reuse the previous pair, or brute-force a new pair.
-    overbuy,oversell = best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbuy,prev_oversell,ind,period,closes,dates,minimum_days)
+    overbuy,oversell = best_RSI_range(risk_percentage,starting_cash,opens,slippage,fees,prev_overbuy,prev_oversell,ind,period,closes,dates,minimum_days,lows,highs)
     prev_overbuy,prev_oversell = overbuy,oversell
     print("Best range for RSI found. Overbuy =",overbuy,"Oversell =",oversell)
 
     # Run the RSI strategy with the selected thresholds and plot the result.
     rsi_offset = period + 3
-    RSI_signals = IndicatorCalculator(closes, dates, minimum_days, period, overbuy, oversell).RSI_signals()
+    RSI_signals = ind.RSI_signals()
     RSIportfolio = Portfolio(opens, risk_percentage, starting_cash, slippage, fees,RSI_signals,period + 3)
     end_cash_text = colored(round(RSIportfolio.end_cash,2),"red")
     profit_text = colored(round(RSIportfolio.profit,2),"red")
-    print("Total end cash for MA :",end_cash_text)
-    print("Profit for MA :",profit_text) 
+    print("Total end cash for RSI :",end_cash_text)
+    print("Profit for RSI :",profit_text) 
 
     #30 because portfolio for MA is 30 less than dates 
     RSIplot = PlotData(dates,period + 3,RSIportfolio.portfolio)
-    plt.plot(RSIplot.calendar_dates, RSIplot.portfolio_plot,label = "MA | Risk = "+str(risk) +"% | Profit =  £"+ str(round(RSIportfolio.profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
+    plt.plot(RSIplot.calendar_dates, RSIplot.portfolio_plot,label = "RSI | Risk = "+str(risk) +"% | Profit =  £"+ str(round(RSIportfolio.profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
+
+    # plot ATR
+    ATR_signals = ind.ATR()
+    ATRPortfolio = Portfolio(opens, risk_percentage, starting_cash, slippage, fees,ATR_signals,period)
+
+    ATRplot = PlotData(dates,period,ATRPortfolio.portfolio)
+    plt.plot(ATRplot.calendar_dates, ATRplot.portfolio_plot,label = "ATR | Risk = "+str(risk) +"% | Profit =  £"+ str(round(ATRPortfolio.profit,2))+ " | "+str(starting_year)+"→" + str(int(ending_year)+1))
 
     #x-axis year steps
     index = []

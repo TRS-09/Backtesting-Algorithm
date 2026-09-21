@@ -116,7 +116,7 @@ class HomeScreen(QWidget):
         resultsBtn.setFont(QFont("arial", 18))
         resultsBtn.setStyleSheet("""
             QPushButton {
-                background-color: #d9d9db;
+                background-color: #823838;
                 padding: 25px 10px;
                 color: black;
             }
@@ -140,7 +140,7 @@ class HomeScreen(QWidget):
         backtestBtn = QPushButton("Run Backtest")
         backtestBtn.setStyleSheet("""
             QPushButton {
-                background-color: #d9d9db;
+                background-color: #823838;
                 color: black;
             }
         """)

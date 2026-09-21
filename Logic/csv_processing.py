@@ -25,7 +25,7 @@ def file_find_select():
 class ProcessCSV:
     def __init__(self,file):
         self.file = file
-        self.opens_loc, self.closes_loc, self.date_loc, self.descendingcsv = self.filetype()
+        self.opens_loc, self.closes_loc, self.date_loc, self.descendingcsv,self.lows_loc,self.highs_loc = self.filetype()
         self.min_year, self.max_year = self.year_range()
 
     def filetype(self):
@@ -35,6 +35,8 @@ class ProcessCSV:
             opens_loc = f_line.index("Open")
             closes_loc = f_line.index("Close")
             date_loc = f_line.index("Date")
+            highs_loc = f_line.index("High")
+            lows_loc = f_line.index("Low")
 
             # find if its descending and ensure its not between a month, if it is, go down a few lines and recheck
             f_line1 = (f.readline().strip("\n")).split(",")
@@ -53,7 +55,7 @@ class ProcessCSV:
                 else:
                     descendingcsv = False
 
-            return opens_loc, closes_loc, date_loc, descendingcsv
+            return opens_loc, closes_loc, date_loc, descendingcsv, lows_loc,highs_loc
 
     # Return the minimum and maximum year available in the selected CSV.
     def year_range(self):
@@ -75,6 +77,8 @@ class ProcessCSV:
         dates = []
         opens = []
         closes = []
+        highs = []
+        lows = []
         start = False
 
         with open(self.file, "r") as f:
@@ -95,6 +99,8 @@ class ProcessCSV:
                         dates.append(line[self.date_loc])
                         opens.append(float(line[self.opens_loc]))
                         closes.append(float(line[self.closes_loc]))
+                        highs.append(float(line[self.highs_loc]))
+                        lows.append(float(line[self.lows_loc]))
             else:
                 row = []
                 for line in f:
@@ -113,4 +119,6 @@ class ProcessCSV:
                         dates.append((line[self.date_loc]))
                         opens.append(float(line[self.opens_loc]))
                         closes.append(float(line[self.closes_loc]))
-        return dates, opens, closes
+                        highs.append(float(line[self.highs_loc]))
+                        lows.append(float(line[self.lows_loc]))
+        return dates, opens, closes, highs, lows
