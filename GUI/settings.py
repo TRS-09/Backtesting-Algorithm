@@ -12,11 +12,13 @@ class SettingsScreen(QWidget):
         layout.setSpacing(30)
         layout.setContentsMargins(40, 30, 40, 40)
 
+        # Added ATR Box into the vertical layout order before the run button
         layout.addLayout(self.build_top_bar())
         layout.addWidget(self.build_divider())
         layout.addWidget(self.build_rsi_box())
         layout.addWidget(self.build_ema_box())
-        layout.addLayout(self.build_run_button())
+        layout.addWidget(self.build_atr_box())  # Added ATR box widget
+        layout.addLayout(self.build_run_button()) # Run button remains at the bottom
         layout.addStretch()
 
         self.setLayout(layout)
@@ -153,10 +155,10 @@ class SettingsScreen(QWidget):
 
         return frame
 
-
+    # -----------------------------
+    # EMA/SMA Settings Box
+    # -----------------------------
     def build_ema_box(self):
-        #initial setup for EMA settings box
-        
         frame = QFrame()
         frame.setObjectName("EMAFrame")
         frame.setStyleSheet("""
@@ -198,7 +200,6 @@ class SettingsScreen(QWidget):
         row_fast.addWidget(fast_lbl)
         row_fast.addWidget(fast_box)
         box.addLayout(row_fast)
-
 
         # Slow MA row
         row_slow = QHBoxLayout()
@@ -248,7 +249,104 @@ class SettingsScreen(QWidget):
 
         return frame        
 
+    # -----------------------------
+    # ATR Settings Box
+    # -----------------------------
+    def build_atr_box(self):
+        # Frame setup styled to match RSI and EMA boxes
+        frame = QFrame()
+        frame.setObjectName("ATRFrame")
+        frame.setStyleSheet("""
+            QFrame#ATRFrame {
+                border: 5px solid grey;
+                background-color: #323232;
+            }
+            QFrame#ATRFrame * {
+                background-color: #323232;
+                color: white;
+            }
+        """)
+        box = QVBoxLayout(frame)
 
+        # Title
+        label = QLabel("ATR Settings")
+        label.setStyleSheet("color: white;")
+        box.addWidget(label)
+        
+        # ATR Lookback Period Row
+        row_period = QHBoxLayout()
+
+        period_lbl = QLabel("ATR Period:")
+        period_lbl.setStyleSheet("color: white; padding: 5px;")
+
+        period_box = QComboBox()
+        period_box.addItems(["7", "10", "14", "21", "28"])
+        period_box.setCurrentText("14") # Standard 14-day lookback
+        period_box.setStyleSheet("""
+            QComboBox {
+                color: white;
+                padding: 5px;
+            }
+            QComboBox QAbstractItemView {
+                color: white;
+            }
+        """)
+
+        row_period.addWidget(period_lbl)
+        row_period.addWidget(period_box)
+        box.addLayout(row_period)
+
+        # ATR Breakout Multiplier Row (K-Factor)
+        row_mult = QHBoxLayout()
+
+        mult_lbl = QLabel("ATR Multiplier (K-Factor):")
+        mult_lbl.setStyleSheet("color: white; padding: 5px;")
+
+        mult_box = QComboBox()
+        mult_box.addItems(["1.0", "1.25", "1.5", "2.0", "2.5", "3.0"])
+        mult_box.setCurrentText("1.5") # Standard breakout threshold
+        mult_box.setStyleSheet("""
+            QComboBox {
+                color: white;
+                padding: 5px;
+            }
+            QComboBox QAbstractItemView {
+                color: white;
+            }
+        """)
+
+        row_mult.addWidget(mult_lbl)
+        row_mult.addWidget(mult_box)
+        box.addLayout(row_mult)
+
+        # Minimum Cooldown Days Row
+        row_min = QHBoxLayout()
+
+        min_lbl = QLabel("Minimum Days (days between BUY/SELLs):")
+        min_lbl.setStyleSheet("color: white; padding: 5px;")
+
+        min_box = QComboBox()
+        min_box.addItems(["0", "2", "5", "10", "14"])
+        min_box.setCurrentText("2") # Short cooldown to handle breakout retests
+        min_box.setStyleSheet("""
+            QComboBox {
+                color: white;
+                padding: 5px;
+            }
+            QComboBox QAbstractItemView {
+                color: white;
+            }
+        """)
+
+        row_min.addWidget(min_lbl)
+        row_min.addWidget(min_box)
+        box.addLayout(row_min)
+
+        return frame
+
+    # -----------------------------
+    # Run Button Layout
+    # -----------------------------
     def build_run_button(self):
         row = QHBoxLayout()
         row.addStretch()   # pushes button to the right
@@ -269,8 +367,3 @@ class SettingsScreen(QWidget):
 
         row.addWidget(run_btn)
         return row
-
-
-
-        
-        
