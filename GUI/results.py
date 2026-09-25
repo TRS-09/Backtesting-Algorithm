@@ -9,7 +9,6 @@ from PySide6.QtGui import QFont
 class Results(QWidget):
     # Navigation signals
     go_home = Signal()
-    go_settings = Signal()
 
     def __init__(self):
         super().__init__()
