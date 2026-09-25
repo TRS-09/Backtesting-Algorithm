@@ -40,12 +40,14 @@ class SettingsScreen(QWidget):
                 color: black;
             }
         """)
+        backBtn.clicked.connect(self.go_home.emit)
 
         row = QHBoxLayout()
         row.addWidget(backBtn)
         row.addStretch()
         row.addWidget(title)
         row.addStretch()
+
 
         return row
 
