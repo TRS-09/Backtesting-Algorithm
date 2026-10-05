@@ -1,3 +1,4 @@
 -Your code incorrectly resets prev_signal to "HOLD" on every non‑signal day. This causes the algorithm to allow repeated BUY or SELL signals without the required opposite crossover. As a result, you get invalid sequences like
 -The cooldown (days_to_wait) waited one extra day due to an off‑by‑one error.
 -The signal list was shorter than the closes list, causing misalignment in later backtesting.
+-couldnt get the columns to display in the correct order. -sort col-indexes after its mapped, as if its the first index, then thats what the sort is based on

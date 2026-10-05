@@ -77,9 +77,6 @@ while end != "Y" :
 
     # Load only the chosen date window into memory for the strategies to use.
     dates, opens, closes, highs, lows = csv_data.load_price_data(starting_year, ending_year)
-    for i in range(3):
-        print(lows[i])
-        print(highs[i])
 
     if not dates:
         print(colored(f"No data found for year {starting_year}. Try a different year.", "yellow"))
