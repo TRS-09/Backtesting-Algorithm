@@ -10,6 +10,7 @@ class HomeScreen(QWidget):
     go_settings = Signal()
     go_CSV = Signal()
     go_results = Signal()
+    base_settings = Signal(list)
 
     def __init__(self):
         super().__init__()
@@ -248,9 +249,27 @@ class HomeScreen(QWidget):
         risk_layout.addWidget(risk_lbl)
         risk_layout.addWidget(self.risk_box)
 
+        # 4. Apply Button (UI only)
+        self.apply_portfolio_btn = QPushButton("Apply")
+        self.apply_portfolio_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #555;
+                color: white;
+                font-size: 15px;
+                font-weight: bold;
+                padding: 6px 18px;
+                border-radius: 4px;
+            }
+            QPushButton:hover {
+                background-color: #666;
+            }
+        """)
+        self.apply_portfolio_btn.clicked.connect(self.base_settings_applied)
+
         controls_row.addWidget(self.fees_checkbox)
         controls_row.addLayout(cash_layout)
         controls_row.addLayout(risk_layout)
+        controls_row.addWidget(self.apply_portfolio_btn)
         controls_row.addStretch()
 
         main_box.addLayout(controls_row)
@@ -324,3 +343,7 @@ class HomeScreen(QWidget):
                 }
             """)
             print("... CSV NOT LOADED")
+
+    def base_settings_applied(self):
+        self.base_settings_list = [self.fees_checkbox.isChecked(),int(self.cash_box.value()),int(self.risk_box.value())]
+        self.base_settings.emit(self.base_settings_list)

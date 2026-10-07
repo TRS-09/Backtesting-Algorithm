@@ -47,6 +47,7 @@ setting.settings_applied.connect(logic_handler.recieve_settings)
 csvscreen.years_applied.connect(logic_handler.recieve_years)
 csvscreen.file_path_got.connect(logic_handler.receive_file)
 csvscreen.columns_validated.connect(logic_handler.recieve_columns)
+home.base_settings.connect(logic_handler.recieve_base_settings)
 
 stack.show()
-sys.exit(app.exec())
+sys.exit(app.exec()) 

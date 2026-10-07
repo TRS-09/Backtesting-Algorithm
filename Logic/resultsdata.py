@@ -1,5 +1,6 @@
 from Logic.csv_processing import ProcessCSV
 from Logic.calculate_signals import IndicatorCalculator
+from Logic.portfolio import Portfolio
 
 class RecieveData:
 
@@ -28,6 +29,7 @@ class RecieveData:
 
         # Dictionary to hold raw settings
         self.settings = {}
+        self.base_settings = []
 
         # Individual typed variables for calculations
         self.rsi_overbought = 70
@@ -79,6 +81,10 @@ class RecieveData:
         self.columns_present = columns_present
 
         print("Recieved columns:",self.columns_present, "(resultsdata.py)")
+    
+    def recieve_base_settings(self,base_settings:list):
+        self.base_settings = base_settings
+        print("Recieved base settings: ",self.base_settings,"(resultsdata.py)")
 
 class BacktestRun:
     def __init__(self,logic_handler):
@@ -98,7 +104,6 @@ class BacktestRun:
         self.atr_signals = self.Signals.ATR_signals()
 
     def run_portfolio(self):
-        #NEED TO DO THIS
-        pass
+        self.MA_portfolio = Portfolio(self.opens, risk_percentage, starting_cash, slippage, fees,MA_signals,30)
 
 
