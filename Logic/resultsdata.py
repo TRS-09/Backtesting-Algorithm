@@ -104,6 +104,7 @@ class BacktestRun:
         self.atr_signals = self.Signals.ATR_signals()
 
     def run_portfolio(self):
-        self.MA_portfolio = Portfolio(self.opens, risk_percentage, starting_cash, slippage, fees,MA_signals,30)
-
+        self.SMA_portfolio = Portfolio(self.opens, self.logic.base_settings[2]/100, self.logic.base_settings[1],0.001, self.logic.base_settings[0],self.sma_signals,1 ) #offset = 1
+        self.RSI_portfolio = Portfolio(self.opens, self.logic.base_settings[2]/100, self.logic.base_settings[1],0.001, self.logic.base_settings[0],self.rsi_signals,self.logic.rsi_period)
+        self.ATR_portfolio = Portfolio(self.opens, self.logic.base_settings[2]/100, self.logic.base_settings[1],0.001, self.logic.base_settings[0],self.atr_signals,self.logic.atr_period)
 
