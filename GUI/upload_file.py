@@ -381,13 +381,12 @@ class loadCSV(QWidget):
       return
 
     # Remap column indices into readable display strings
-    col_indixes = list(self.CSV.filetype())
-    print(col_indixes)
-    col_indixes.pop(3)
+    col_indexes = list(self.CSV.filetype())
+    col_indexes.pop(3)
 
     names = ["Opens", "Closes", "Dates", "Lows", "Highs"]
     available_columns_in_order = []
-    mapped = sorted(zip(col_indixes,names))
+    mapped = sorted(zip(col_indexes,names))
 
     for i in mapped:
       available_columns_in_order.append(i[1])

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from termcolor import colored
 
-# Show available CSV files and return the user-selected path.
+# Show available CSV files and return the user-selected path. ONLY FOR USE IN CONSOLE. DO NOT CALL IF USING GUI
 def file_find_select():
     file_name_lst = []
     file_lst = []
@@ -23,10 +23,15 @@ def file_find_select():
     return file_lst[file_choice - 1]
 
 class ProcessCSV:
-    def __init__(self,file):
+    def __init__(self, file):
         self.file = file
-        self.opens_loc, self.closes_loc, self.date_loc, self.descendingcsv,self.lows_loc,self.highs_loc = self.filetype()
+        self.opens_loc, self.closes_loc, self.date_loc, self.descendingcsv, self.lows_loc, self.highs_loc = self.filetype()
         self.min_year, self.max_year = self.year_range()
+        self.dates = []
+        self.opens = []
+        self.closes = []
+        self.highs = []
+        self.lows = []
 
     def filetype(self):
         # finds out the format of the file
@@ -55,7 +60,7 @@ class ProcessCSV:
                 else:
                     descendingcsv = False
 
-            return opens_loc, closes_loc, date_loc, descendingcsv, lows_loc,highs_loc
+            return opens_loc, closes_loc, date_loc, descendingcsv, lows_loc, highs_loc
 
     # Return the minimum and maximum year available in the selected CSV.
     def year_range(self):
@@ -72,13 +77,13 @@ class ProcessCSV:
                     max_year = year
         return min_year, max_year
 
-    # Load only the requested date window and return matching date/open/close lists.
+    # Load only the requested date window and save matching price data as instance attributes.
     def load_price_data(self, starting_year, ending_year):
-        dates = []
-        opens = []
-        closes = []
-        highs = []
-        lows = []
+        self.dates = []
+        self.opens = []
+        self.closes = []
+        self.highs = []
+        self.lows = []
         start = False
 
         with open(self.file, "r") as f:
@@ -96,11 +101,11 @@ class ProcessCSV:
                         start = False
 
                     if start == True:
-                        dates.append(line[self.date_loc])
-                        opens.append(float(line[self.opens_loc]))
-                        closes.append(float(line[self.closes_loc]))
-                        highs.append(float(line[self.highs_loc]))
-                        lows.append(float(line[self.lows_loc]))
+                        self.dates.append(line[self.date_loc])
+                        self.opens.append(float(line[self.opens_loc]))
+                        self.closes.append(float(line[self.closes_loc]))
+                        self.highs.append(float(line[self.highs_loc]))
+                        self.lows.append(float(line[self.lows_loc]))
             else:
                 row = []
                 for line in f:
@@ -116,9 +121,8 @@ class ProcessCSV:
                         # stops appending variables
                         start = False
                     if start == True:
-                        dates.append((line[self.date_loc]))
-                        opens.append(float(line[self.opens_loc]))
-                        closes.append(float(line[self.closes_loc]))
-                        highs.append(float(line[self.highs_loc]))
-                        lows.append(float(line[self.lows_loc]))
-        return dates, opens, closes, highs, lows
+                        self.dates.append((line[self.date_loc]))
+                        self.opens.append(float(line[self.opens_loc]))
+                        self.closes.append(float(line[self.closes_loc]))
+                        self.highs.append(float(line[self.highs_loc]))
+                        self.lows.append(float(line[self.lows_loc]))
