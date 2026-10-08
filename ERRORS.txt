@@ -2,3 +2,4 @@
 -The cooldown (days_to_wait) waited one extra day due to an off‑by‑one error.
 -The signal list was shorter than the closes list, causing misalignment in later backtesting.
 -couldnt get the columns to display in the correct order. -sort col-indexes after its mapped, as if its the first index, then thats what the sort is based on
+- errors with portfolio casting years and getting variables int/str confused between files

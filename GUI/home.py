@@ -11,6 +11,7 @@ class HomeScreen(QWidget):
     go_CSV = Signal()
     go_results = Signal()
     base_settings = Signal(list)
+    run_backtest = Signal()
 
     def __init__(self):
         super().__init__()
@@ -280,8 +281,8 @@ class HomeScreen(QWidget):
         row = QHBoxLayout()
         row.setAlignment(Qt.AlignCenter)
 
-        backtest_btn = QPushButton("Run Backtest")
-        backtest_btn.setStyleSheet("""
+        self.backtest_btn = QPushButton("Run Backtest")
+        self.backtest_btn.setStyleSheet("""
             QPushButton {
                 background-color: #823838;
                 color: white;
@@ -294,8 +295,8 @@ class HomeScreen(QWidget):
                 background-color: #9E4343;
             }
         """)
-
-        row.addWidget(backtest_btn)
+        self.backtest_btn.clicked.connect(self.run_backtest.emit)
+        row.addWidget(self.backtest_btn)
         return row
 
     def build_bottom_divider(self):

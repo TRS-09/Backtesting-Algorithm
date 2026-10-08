@@ -86,6 +86,9 @@ class ProcessCSV:
         self.lows = []
         start = False
 
+        starting_year = str(starting_year)
+        ending_year = str(int(ending_year) + 1)
+
         with open(self.file, "r") as f:
             f.readline()
             if self.descendingcsv == False:

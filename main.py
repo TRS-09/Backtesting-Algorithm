@@ -8,7 +8,7 @@ from GUI.settings import SettingsScreen
 from GUI.upload_file import loadCSV
 
 # Import your Logic handler
-from Logic.resultsdata import RecieveData
+from Logic.resultsdata import RecieveData,BacktestRun
 
 app = QApplication(sys.argv)
 
@@ -48,6 +48,10 @@ csvscreen.years_applied.connect(logic_handler.recieve_years)
 csvscreen.file_path_got.connect(logic_handler.receive_file)
 csvscreen.columns_validated.connect(logic_handler.recieve_columns)
 home.base_settings.connect(logic_handler.recieve_base_settings)
+
+#create object, then run backtest if signal
+Backtest1 = BacktestRun(logic_handler)
+home.run_backtest.connect(Backtest1.run_portfolio)
 
 stack.show()
 sys.exit(app.exec()) 
