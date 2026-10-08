@@ -348,3 +348,18 @@ class HomeScreen(QWidget):
     def base_settings_applied(self):
         self.base_settings_list = [self.fees_checkbox.isChecked(),int(self.cash_box.value()),int(self.risk_box.value())]
         self.base_settings.emit(self.base_settings_list)
+
+    def set_backtest_button_green(self):
+        self.backtest_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3E6B43;
+                color: white;
+                font-size: 20px;
+                font-weight: bold;
+                padding: 16px 48px;
+                border-radius: 6px;
+            }
+            QPushButton:hover {
+                background-color: #4C7F52;
+            }
+        """)

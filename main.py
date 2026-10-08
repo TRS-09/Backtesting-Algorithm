@@ -43,15 +43,29 @@ results.go_home.connect(lambda: stack.setCurrentIndex(0))
 csvscreen.csv_loaded.connect(home.updatestrategyButtonColor)
 
 # Connect signals from GUI to results data
-setting.settings_applied.connect(logic_handler.recieve_settings)
+setting.settings_applied.connect(logic_handler.recieve_settings)    
 csvscreen.years_applied.connect(logic_handler.recieve_years)
 csvscreen.file_path_got.connect(logic_handler.receive_file)
 csvscreen.columns_validated.connect(logic_handler.recieve_columns)
 home.base_settings.connect(logic_handler.recieve_base_settings)
 
-#create object, then run backtest if signal
+#connect signals from resultsdata to home.py
+logic_handler.ready_to_backtest.connect(home.set_backtest_button_green)
+#logic_handler.ready_to_results.connect(home.set_results_button_green)
+
+
+
+def run_portfolio_if_ready():
+    if logic_handler.ready():
+        Backtest1.run_portfolio()
+    else:
+        print(">>>>> Not enough data to calculate portfolio <<<<<")
+
 Backtest1 = BacktestRun(logic_handler)
-home.run_backtest.connect(Backtest1.run_portfolio)
+home.run_backtest.connect(run_portfolio_if_ready)
+
+#send the results to the results graph screen
+Backtest1.results_ready.connect(results.update_graph)
 
 stack.show()
 sys.exit(app.exec()) 

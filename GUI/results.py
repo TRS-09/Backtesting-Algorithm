@@ -5,6 +5,10 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont
 
+# Matplotlib integration imports
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
 
 class Results(QWidget):
     # Navigation signals
@@ -101,27 +105,30 @@ class Results(QWidget):
         header = QLabel("📈 Matplotlib Graph")
         header.setStyleSheet("color: white; font-size: 20px; font-weight: bold;")
 
-        # Placeholder area for Matplotlib FigureCanvas QWidget
-        self.graph_area = QWidget()
-        self.graph_area.setStyleSheet("""
+        # 1. Create Matplotlib Figure & Subplot styled for dark theme
+        self.fig = Figure(facecolor='#2b2b2b')
+        self.ax = self.fig.add_subplot(111)
+        self.ax.set_facecolor('#2b2b2b')
+        
+        # Style axis lines, ticks, and labels for dark mode visibility
+        self.ax.tick_params(colors='#d0d0d0', labelsize=10)
+        for spine in self.ax.spines.values():
+            spine.set_edgecolor('#555')
+
+        # 2. Create the Canvas widget
+        self.canvas = FigureCanvas(self.fig)
+        self.canvas.setStyleSheet("""
             QWidget {
                 background-color: #2b2b2b;
-                border: 2px dashed #555;
+                border: 1px solid #555;
                 border-radius: 6px;
             }
         """)
 
-        # Optional helper text inside the graph area
-        placeholder_layout = QVBoxLayout(self.graph_area)
-        placeholder_label = QLabel("Graph Canvas Area")
-        placeholder_label.setStyleSheet("color: #888; font-size: 18px;")
-        placeholder_label.setAlignment(Qt.AlignCenter)
-        placeholder_layout.addWidget(placeholder_label)
-
         widget = QWidget()
         widget.setLayout(layout)
         layout.addWidget(header)
-        layout.addWidget(self.graph_area, stretch=1)
+        layout.addWidget(self.canvas, stretch=1)
 
         return widget
 
@@ -169,3 +176,38 @@ class Results(QWidget):
             }
         """)
         return btn
+
+    # ------------------------------------------------------------
+    # Graph Plotting Helper
+    # ------------------------------------------------------------
+    def update_graph(self, series_list, title="Portfolio Performance"):
+            self.ax.clear()
+            
+            # Loop through each series and plot it
+            for series in series_list:
+                x = series.get("x")
+                y = series.get("y")
+                label = series.get("label", "")
+                color = series.get("color", None)
+                
+                self.ax.plot(x, y, label=label, color=color, linewidth=2)
+                
+            self.ax.set_title(title, color='white', fontsize=12, pad=10)
+            
+            # Re-apply dark theme styling after clearing axes
+            self.ax.set_facecolor('#2b2b2b')
+            self.ax.tick_params(colors='#d0d0d0', labelsize=10)
+            for spine in self.ax.spines.values():
+                spine.set_edgecolor('#555')
+                
+            # Add a styled legend if labels are provided
+            if any(s.get("label") for s in series_list):
+                legend = self.ax.legend(
+                    facecolor='#323232', 
+                    edgecolor='#555', 
+                    labelcolor='white',
+                    fontsize=10
+                )
+                
+            self.fig.tight_layout()
+            self.canvas.draw()
