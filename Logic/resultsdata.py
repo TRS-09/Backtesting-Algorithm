@@ -89,15 +89,10 @@ class BacktestRun:
         self.logic = logic_handler
 
     def calculate_signals(self):
-        print(">>> [DEBUG] File path:", self.logic.file)
-        print(">>> [DEBUG] Start/End years:", self.logic.start_year, self.logic.end_year)
-        
+    
         self.CSV = ProcessCSV(self.logic.file)
         self.CSV.filetype()
         self.CSV.load_price_data(self.logic.start_year, self.logic.end_year)
-
-        print(">>> [DEBUG] Opens length loaded:", len(self.CSV.opens) if hasattr(self.CSV, 'opens') else "No opens attribute")
-        print(">>> [DEBUG] Closes length loaded:", len(self.CSV.closes) if hasattr(self.CSV, 'closes') else "No closes attribute")
 
         # runs the init of the Inicator calculator, passing through data from the CSV + settings from GUI
         self.Signals = IndicatorCalculator(self.CSV.closes,self.CSV.dates,self.CSV.lows,self.CSV.highs,self.logic.rsi_overbought,self.logic.rsi_oversold,self.logic.rsi_period,self.logic.sma_fast,self.logic.sma_slow,
@@ -108,12 +103,7 @@ class BacktestRun:
         self.rsi_signals = self.Signals.RSI_signals()
         self.atr_signals = self.Signals.ATR_signals()
 
-        print(">>> [DEBUG] SMA signals length:", len(self.sma_signals) if self.sma_signals else "None")
-        print(">>> [DEBUG] First 5 SMA signals:", self.sma_signals[:5] if self.sma_signals else "None")
-
     def run_portfolio(self):
-        print(">>> [DEBUG] Base settings received:", self.logic.base_settings)
-        self.calculate_signals()
         
         self.SMA_portfolio = Portfolio(self.CSV.opens, self.logic.base_settings[2]/100, self.logic.base_settings[1],0.001, self.logic.base_settings[0],self.sma_signals,1 ) #offset = 1
         self.RSI_portfolio = Portfolio(self.CSV.opens, self.logic.base_settings[2]/100, self.logic.base_settings[1],0.001, self.logic.base_settings[0],self.rsi_signals,self.logic.rsi_period)
