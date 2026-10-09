@@ -20,7 +20,7 @@ home = HomeScreen()
 setting = SettingsScreen()
 csvscreen = loadCSV()
 results = Results()
-logic_handler = RecieveData()  # <--- Created logic instance here
+logic_handler = RecieveData()  #Instantiates resultsdata to recieve data from the gui screens 
 
 stack.addWidget(home)  # index 0
 stack.addWidget(setting)  # index 1
@@ -51,9 +51,6 @@ home.base_settings.connect(logic_handler.recieve_base_settings)
 
 #connect signals from resultsdata to home.py
 logic_handler.ready_to_backtest.connect(home.set_backtest_button_green)
-#logic_handler.ready_to_results.connect(home.set_results_button_green)
-
-
 
 def run_portfolio_if_ready():
     if logic_handler.ready():
@@ -66,6 +63,7 @@ home.run_backtest.connect(run_portfolio_if_ready)
 
 #send the results to the results graph screen
 Backtest1.results_ready.connect(results.update_graph)
+Backtest1.ready_to_results.connect(home.set_results_button_green)
 
 stack.show()
 sys.exit(app.exec()) 

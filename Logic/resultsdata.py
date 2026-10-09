@@ -9,7 +9,6 @@ class RecieveData(QObject):
 
     #signal for changing colour of backtest button/results button to show there is enough data to begin
     ready_to_backtest = Signal()
-    ready_to_results = Signal()
 
     def __init__(self):
         super().__init__()
@@ -105,6 +104,7 @@ class BacktestRun(QObject):  #Inherits from QObject
     
     # Define signal at class level
     results_ready = Signal(list)
+    ready_to_results = Signal()
 
     def __init__(self, logic_handler):
         super().__init__()
@@ -150,4 +150,5 @@ class BacktestRun(QObject):  #Inherits from QObject
             {"x": ATR_plot.calendar_dates, "y": ATR_plot.portfolio_plot, "label": "ATR", "color": "#494394"}
         ]
         
+        self.ready_to_results.emit()
         self.results_ready.emit(plottting_data)

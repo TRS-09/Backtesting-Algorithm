@@ -130,9 +130,9 @@ class HomeScreen(QWidget):
         row = QHBoxLayout()
         row.setSpacing(20)
 
-        results_btn = QPushButton("Results")
-        results_btn.setFixedWidth(240)
-        results_btn.setStyleSheet("""
+        self.results_btn = QPushButton("Results")
+        self.results_btn.setFixedWidth(240)
+        self.results_btn.setStyleSheet("""
             QPushButton {
                 background-color: #823838;
                 color: white;
@@ -144,12 +144,12 @@ class HomeScreen(QWidget):
                 background-color: #9E4343;
             }
         """)
-        results_btn.clicked.connect(self.go_results.emit)
+        self.results_btn.clicked.connect(self.go_results.emit)
 
         label = QLabel("See results and visual analysis of backtests")
         label.setStyleSheet("color: #d0d0d0; font-size: 16px;")
 
-        row.addWidget(results_btn)
+        row.addWidget(self.results_btn)
         row.addWidget(label)
 
         return row
@@ -357,6 +357,20 @@ class HomeScreen(QWidget):
                 font-size: 20px;
                 font-weight: bold;
                 padding: 16px 48px;
+                border-radius: 6px;
+            }
+            QPushButton:hover {
+                background-color: #4C7F52;
+            }
+        """)
+    
+    def set_results_button_green(self):
+        self.results_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3E6B43;
+                color: white;
+                font-size: 20px;
+                padding: 22px 10px;
                 border-radius: 6px;
             }
             QPushButton:hover {
